@@ -44,6 +44,7 @@ int getColorHexFromStr(String colorStr) {
 
 var cWhite =  Color(0xFFFFFFFF);
 var cBlack =  Color(0xff222222);
+var cPrimary =  Color(0xff222222);
 var cGrey1 =  Color(0xFFC5C5C5);
 var cGrey2 =  Color(0xFFB2B2B2);
 var cGrey3 =  Color(0xFF9E9E9E);
