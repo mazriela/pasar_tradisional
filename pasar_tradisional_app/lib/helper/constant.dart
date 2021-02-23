@@ -3,9 +3,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-const baseURL = 'http://202.145.0.22:3000/';
-const endPointRegister ="register";
-const endPointLogin ="login";
+// const baseURL = 'http://wkwk.minjem.top/api/pasar/';
+const baseURL = 'http://api.pasartradisional.id/api/pasar/';
+const endPointRegister ="user/register";
+const endPointLogin ="user/login";
+const endtPointGetPasar ="pasar/get";
+const endtPointGetKategoriPasar ="kategori/get";
+const endtPointGetSubKategoriPasar ="kategori/get_sub";
+const endtPointGetProduct ="produk/get";
 const String endPointgetTruckList = baseURL+'list_truck';
 const String endPointgetListTransaksi = baseURL+'list_transaksi';
 const String endPointSaveOrder = baseURL+'simpan_transaksi';
@@ -35,7 +40,7 @@ int getColorHexFromStr(String colorStr) {
   }
 
   TextStyle _textstyle(
-    Color warna, 
+    Color warna,
     double ukuran,
     String fontFamily
   ) {
@@ -44,7 +49,9 @@ int getColorHexFromStr(String colorStr) {
 
 var cWhite =  Color(0xFFFFFFFF);
 var cBlack =  Color(0xff222222);
-var cPrimary =  Color(0xff222222);
+var cPrimary =  Color(0xff073b55);
+var cRed = Color(0xFFFF0000);
+var cGreen = Color(0xFF00FF00);
 var cGrey1 =  Color(0xFFC5C5C5);
 var cGrey2 =  Color(0xFFB2B2B2);
 var cGrey3 =  Color(0xFF9E9E9E);
@@ -54,6 +61,7 @@ var cYellow1 = Color(0xFFFeb80a);
 var cYellow2 = Color(0xffffca45);
 var cYellow3 = Color(0xfffad57a);
 var cYellow4 = Color(0xfffeecc0);
+
 // var cYellow2 = Color(0xFFFFDC3D);
 
 
@@ -66,28 +74,43 @@ final kHintTextStyle = TextStyle(
 );
 
 final kLabelStyleSmall = TextStyle(
-  color: Colors.black,
+  color: cPrimary,
   fontSize: 12,
   fontFamily: 'OpenSans',
 );
 
 final kLabelStyle = TextStyle(
-  color: Colors.black,
+  color: cPrimary,
   fontFamily: 'OpenSans',
 );
 
 final kLabelStyleBold = TextStyle(
-  color: Colors.black,
+  color: cPrimary,
   fontWeight: FontWeight.bold,
   fontFamily: 'OpenSans',
 );
 
 
 final kTextFieldStyle = TextStyle(
-  color: Colors.black,
+  color: cPrimary,
   fontSize: 16,
   fontFamily: 'OpenSans',
 );
+
+
+final baseTextStyle = const TextStyle(fontFamily: 'Poppins');
+final regularTextStyle = baseTextStyle.copyWith(
+    color: Colors.white, fontSize: 15, fontWeight: FontWeight.w400);
+
+final subHeaderTextStyle = regularTextStyle.copyWith(fontSize: 16.0);
+final headerTextStyle = baseTextStyle.copyWith(
+    color: Colors.white, fontSize:18.0, fontWeight: FontWeight.w600);
+
+final toggleButtonStyle = baseTextStyle.copyWith(
+    color: Colors.lightBlue, fontSize: 15.0, fontWeight: FontWeight.w600);
+
+
+
 
 
 final kBoxDecorationStyle = BoxDecoration(
@@ -101,3 +124,4 @@ final kBoxDecorationStyle = BoxDecoration(
     ),
   ],
 );
+

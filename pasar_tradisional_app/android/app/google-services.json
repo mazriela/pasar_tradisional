@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1018392449200",
+    "project_id": "pasar-tradisional-1589b",
+    "storage_bucket": "pasar-tradisional-1589b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1018392449200:android:6e01a97723d96eaf9e6b75",
+        "android_client_info": {
+          "package_name": "com.mazriela.pasar_tradisional_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1018392449200-q4mtmc6u2bq05rmnpi5sgebnhgsisp7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCloU3FbhmmvI7DgWASKGJWJ5ENsD7d8_w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1018392449200-q4mtmc6u2bq05rmnpi5sgebnhgsisp7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

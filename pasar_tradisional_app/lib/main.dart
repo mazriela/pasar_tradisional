@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pasar_tradisional_app/helper/constant.dart';
 import 'package:pasar_tradisional_app/view/login/login_page.dart';
 import 'package:pasar_tradisional_app/view/phone_verif/continue_with_phone.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Pasar Tradisional',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: cPrimary,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         textTheme: GoogleFonts.rubikTextTheme(),
 

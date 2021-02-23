@@ -1,10 +1,15 @@
 import 'dart:convert';
+import 'dart:math';
 
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pasar_tradisional_app/helper/constant.dart';
+import 'package:pasar_tradisional_app/helper/toast/Toast.dart';
+import 'package:pasar_tradisional_app/model/login/ModelLogin.dart';
+import 'package:pasar_tradisional_app/view/home/HomePage.dart';
+import 'package:pasar_tradisional_app/view/phone_verif/continue_with_phone.dart';
+import 'package:pasar_tradisional_app/view/register/register_page.dart';
 
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,15 +26,25 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = new TextEditingController();
-  TextEditingController passwordController = new TextEditingController();
+  TextEditingController _loginEmailController = new TextEditingController();
+  TextEditingController _loginPasswordController = new TextEditingController();
 
-  bool _rememberMe = false;
+  bool _privacyPolicy = false;
   var _stateButton = 0;
 
-  var isLogin, idUser, emailUser, namaUser, telpUser, noKtpUser;
+  var isLogin,
+      idUser,
+      usernameUser,
+      emailUser,
+      namaUser,
+      telpUser,
+      fotoUser,
+      levelUser;
 
-  Widget _buildEmailTF() {
+  ModelLogin modelLogin;
+  bool _obscureText = true;
+
+  Widget _buildUsernameTF() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -43,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
-            controller: emailController,
+            controller: _loginEmailController,
             keyboardType: TextInputType.emailAddress,
             style: kTextFieldStyle,
             decoration: InputDecoration(
@@ -51,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
               contentPadding: EdgeInsets.only(top: 14.0),
               prefixIcon: Icon(
                 Icons.person,
-                color: cBlack,
+                color: cPrimary,
               ),
               hintText: 'Masukkan Username',
               hintStyle: kHintTextStyle,
@@ -76,15 +91,30 @@ class _LoginPageState extends State<LoginPage> {
           decoration: kBoxDecorationStyle,
           height: 60.0,
           child: TextField(
-            controller: passwordController,
-            obscureText: true,
+            controller: _loginPasswordController,
+            obscureText: _obscureText,
             style: kTextFieldStyle,
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(top: 14.0),
+              suffixIcon: _obscureText
+                  ? GestureDetector(
+                      child: Icon(
+                        Icons.hdr_on,
+                        color: cGrey1,
+                      ),
+                      onTap: _toggle,
+                    )
+                  : GestureDetector(
+                      child: Icon(
+                        Icons.hdr_off,
+                        color: cGrey1,
+                      ),
+                      onTap: _toggle,
+                    ),
               prefixIcon: Icon(
                 Icons.lock,
-                color: cBlack,
+                color: cPrimary,
               ),
               hintText: 'Masukkan Password',
               hintStyle: kHintTextStyle,
@@ -100,7 +130,7 @@ class _LoginPageState extends State<LoginPage> {
       alignment: Alignment.centerRight,
       child: FlatButton(
         onPressed: () {
-          showToastComingSoon();
+          Toast.show('Coming soon!', context, backgroundColor: cGrey1);
         },
         padding: EdgeInsets.only(right: 0.0),
         child: Text(
@@ -116,14 +146,14 @@ class _LoginPageState extends State<LoginPage> {
       child: Row(
         children: <Widget>[
           Theme(
-            data: ThemeData(unselectedWidgetColor: cBlack),
+            data: ThemeData(unselectedWidgetColor: cPrimary),
             child: Checkbox(
-              value: _rememberMe,
+              value: _privacyPolicy,
               checkColor: cWhite,
-              activeColor: cBlack,
+              activeColor: cPrimary,
               onChanged: (value) {
                 setState(() {
-                  _rememberMe = value;
+                  _privacyPolicy = value;
                 });
               },
             ),
@@ -133,7 +163,8 @@ class _LoginPageState extends State<LoginPage> {
               Text(
                 'Setuju dengan Syarat & Ketentuan Pengunaan',
                 style: kLabelStyleSmall,
-              ),  Text(
+              ),
+              Text(
                 'dan Kebijakan Privasi Pasar Tradisional',
                 style: kLabelStyleSmall,
               ),
@@ -156,14 +187,14 @@ class _LoginPageState extends State<LoginPage> {
               animateButton();
             }
           });
-          actionLogin();
+          validateLogin();
         },
         padding: EdgeInsets.all(10.0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        color: cBlack,
-        child: setUpButtonChild("LOGIN"),
+        color: cPrimary,
+        child: setUpButtonChild("MASUK"),
       ),
     );
   }
@@ -171,10 +202,10 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(builder: (context) => RegisterPage()),
-        // );
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RegisterPage()),
+        );
       },
       child: RichText(
         text: TextSpan(
@@ -214,8 +245,6 @@ class _LoginPageState extends State<LoginPage> {
                       cWhite,
                       cWhite,
                       cWhite,
-
-
                     ],
                     stops: [0.1, 0.4, 0.7, 0.9],
                   ),
@@ -237,7 +266,7 @@ class _LoginPageState extends State<LoginPage> {
                         Text(
                           'Sign In',
                           style: TextStyle(
-                            color: cBlack,
+                            color: cPrimary,
                             fontSize: 30.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -245,7 +274,7 @@ class _LoginPageState extends State<LoginPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: CircleAvatar(
-                              backgroundColor: cBlack,
+                              backgroundColor: cPrimary,
                               radius: 50,
                               child: Image.asset(
                                 "assets/images/holding-phone.png",
@@ -254,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
                               )),
                         ),
                         SizedBox(height: 10.0),
-                        _buildEmailTF(),
+                        _buildUsernameTF(),
                         SizedBox(
                           height: 10.0,
                         ),
@@ -275,45 +304,44 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void showToastComingSoon() {
-    Fluttertoast.showToast(
-        msg: "This feature is under maintenance",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: cGrey4,
-        textColor: cWhite,
-        fontSize: 16.0);
-  }
-
-  void showToast(message) {
-    Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: cGrey4,
-        textColor: cWhite,
-        fontSize: 16.0);
-  }
-
   void animateButton() {
     setState(() {
       _stateButton = 1;
     });
   }
 
-  void actionLogin() {
-    String email = emailController.text;
-    String password = passwordController.text;
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
+  void validateLogin() {
+    String password = _loginPasswordController.text;
+    String email = _loginEmailController.text;
 
     if (email.isNotEmpty || password.isNotEmpty) {
-      print("do login");
+      if (!_privacyPolicy) {
+        setState(() {
+          _stateButton = 0;
+        });
+
+        Toast.show('Anda belum menyetujui kebijakan privasi.', context,
+            backgroundColor: cYellow1);
+      } else {
+        actionLogin();
+      }
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //       builder: (context) => LoginPage(),
+      //     ));
     } else {
       setState(() {
         _stateButton = 0;
       });
-      showToast("Email dan Password tidak boleh kosong");
+      Toast.show('Email dan Password tidak boleh kosong.', context,
+          backgroundColor: cYellow1);
     }
   }
 
@@ -345,65 +373,76 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-//   void login() async {
-//     final response = await http.post(baseURL + endPointLogin, body: {
-//       'email': emailController.text,
-//       'password': passwordController.text,
-//     });
-//     var statusCode;
-//     if (response.body != "") {
-//       var convertJSON, data, message, status, role_id;
-//       var convertDataToJSON = json.decode(response.body);
-//       convertJSON = convertDataToJSON;
-//       data = convertDataToJSON['data'];
-//       message = convertDataToJSON['message'];
-//       status = convertDataToJSON['status'];
-//       if (status == 1) {
-//         role_id = data[0]['role_id'].toString();
-//         print(role_id);
-//         if(role_id == "2"){
-//           showToast(message);
-//           setState(() {
-//             _stateButton = 2;
-//           });
-//           isLogin = true;
-//           idUser = data[0]['_id'];
-//           emailUser = data[0]['email'];
-//           namaUser = data[0]['nama'];
-//           telpUser = data[0]['telp'];
-//           noKtpUser = data[0]['no_ktp'];
-//           savePrefDriver();
-//           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => MapsView()));
-//         } else {
-//           showToast("Username/Password Salah");
-//           setState(() {
-//             _stateButton = 0;
-//           });
-//         }
-//
-//       } else {
-//         showToast(message);
-//         setState(() {
-//           _stateButton = 0;
-//         });
-//       }
-//     } else {
-//       setState(() {
-//         _stateButton = 0;
-//       });
-//     }
-// //    Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();//close the dialoge
-//   }
+  void actionLogin() async {
+    final response = await http.post(baseURL + endPointLogin, body: {
+      'username': _loginEmailController.text,
+      'password': _loginPasswordController.text,
+    });
+    var statusCode;
+    if (response.statusCode == 200) {
+      if (response.body != "") {
+        modelLogin = modelLoginFromJson(response.body);
+        var  message, status, role_id;
+        var convertDataToJSON = json.decode(response.body);
+        print("response = $convertDataToJSON");
+        status = modelLogin.status;
+        print("response = ${response.body}");
+        if (status) {
+          var data = modelLogin.data;
+          message = convertDataToJSON['message'];
+          isLogin = true;
+          idUser = data[0].idUser;
+          usernameUser = data[0].username;
+          namaUser = data[0].namaLengkap;
+          emailUser = data[0].email;
+          telpUser = data[0].noTelp;
+          fotoUser = data[0].foto;
+          levelUser = data[0].level;
+          savePrefUser();
+          Toast.show(message, context, backgroundColor: cGreen);
 
-  savePrefDriver() async {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+          Toast.dismiss();
+        } else {
+          print("else 1");
+
+          Toast.show(message, context, backgroundColor: cRed);
+          setState(() {
+            _stateButton = 0;
+          });
+        }
+      } else {
+        print("else 2");
+        Toast.show('Koneksi Terputus, Mohon Coba Lagi', context,
+            backgroundColor: cRed);
+
+        setState(() {
+          _stateButton = 0;
+        });
+      }
+    } else {
+      print("else 3");
+      Toast.show('Koneksi Terputus, Mohon Coba Lagi', context,
+          backgroundColor: cRed);
+
+      setState(() {
+        _stateButton = 0;
+      });
+    }
+  }
+
+  savePrefUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setString('isLogin', isLogin.toString());
-      prefs.setString('id', idUser.toString());
-      prefs.setString('email', emailUser.toString());
-      prefs.setString('nama', namaUser.toString());
-      prefs.setString('telp', telpUser.toString());
-      prefs.setString('no_ktp', noKtpUser.toString());
+      prefs.setString('idLogin', idUser.toString());
+      prefs.setString('usernameLogin', usernameUser.toString());
+      prefs.setString('namaLogin', namaUser.toString());
+      prefs.setString('emailLogin', emailUser.toString());
+      prefs.setString('telpLogin', telpUser.toString());
+      prefs.setString('fotoLogin', fotoUser.toString());
+      prefs.setString('levelLogin', levelUser.toString());
     });
   }
 }
